@@ -22,11 +22,11 @@ done for you.
 
 let prob0_answer = "int" ;;
 
-let prob1a_answer = "???" ;;
+let prob1a_answer = "string" ;;
 
-let prob1b_answer = "???" ;;
+let prob1b_answer = "int option list" ;;
 
-let prob1c_answer = "???" ;;
+let prob1c_answer = "('a option * float option) * bool" ;;
 
 (*......................................................................
 There are several values defined below that do not type check. 
@@ -42,14 +42,27 @@ leave the underscores in as well.)
 ......................................................................*)
 
 (*
+
+Is a list of (string * int) not a (string * (int list)). Need parentheses 
+to make sense
+
 let _prob1d : string * int list = [("CS", 51); ("CS", 50)] ;;
 *)
   
+let _prob1d : (string * int) list = [("CS", 51); ("CS", 50)] ;;
+
 (*
+
+
+
 let _prob1e : int =
   let add (x, y) = x + y in
   if add (4, 3.9) = 10 then 4 else 2 ;;
 *)
+
+let _prob1e : int -> float =
+  let add (x, y) = x + y in
+  if add (4, 3.9) = 10 then 4 else 2 ;;
 
 (*
 let _prob1f : (string * string) list =
@@ -58,6 +71,12 @@ let _prob1f : (string * string) list =
    ("July", None); ("August", None); ("September", 3);
    ("October", 1); ("November", 2); ("December", 3)] ;;
 *)
+
+let _prob1f : (string * 'a option) list =
+  [("January", None); ("February", 1); ("March", None); 
+   ("April", None); ("May", None); ("June", 1); 
+   ("July", None); ("August", None); ("September", 3);
+   ("October", 1); ("November", 2); ("December", 3)] ;;
 
 (*======================================================================
 Problem 2 - Writing functions
@@ -94,7 +113,18 @@ Here is its signature:
 Replace the line below with your own definition of "reversed".
 ......................................................................*)
 
-let reversed = (fun _ -> failwith "reversed not implemented") ;;
+let reversed = fun lst ->
+
+let square lst =
+  List.map (fun x -> x * x) lst
+
+
+let rec reversed lst =
+  match lst with
+  | [] -> raise(Invalid_argument "reversed: empty list")
+  | [elt] -> true
+  | head :: tail -> if head > List.hd tail then reversed tail
+                    else false;;
 
 (*......................................................................
 Problem 2b: The function "merge" takes two integer lists, each
