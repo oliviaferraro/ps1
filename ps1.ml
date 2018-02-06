@@ -72,11 +72,11 @@ let _prob1f : (string * string) list =
    ("October", 1); ("November", 2); ("December", 3)] ;;
 *)
 
-let _prob1f : (string * 'a option) list =
-  [("January", None); ("February", 1); ("March", None); 
-   ("April", None); ("May", None); ("June", 1); 
-   ("July", None); ("August", None); ("September", 3);
-   ("October", 1); ("November", 2); ("December", 3)] ;;
+let _prob1f : (string * int option) list =
+  [("January", None); ("February", Some 1); ("March", None); 
+   ("April", None); ("May", None); ("June", Some 1); 
+   ("July", None); ("August", None); ("September", Some 3);
+   ("October", Some 1); ("November", Some 2); ("December", Some 3)] ;;
 
 (*======================================================================
 Problem 2 - Writing functions
@@ -113,17 +113,11 @@ Here is its signature:
 Replace the line below with your own definition of "reversed".
 ......................................................................*)
 
-let reversed = fun lst ->
-
-let square lst =
-  List.map (fun x -> x * x) lst
-
-
 let rec reversed lst =
   match lst with
   | [] -> raise(Invalid_argument "reversed: empty list")
-  | [elt] -> true
-  | head :: tail -> if head > List.hd tail then reversed tail
+  | [_] -> true
+  | h1 :: (h2 :: _tl as tail) -> if h1 > h2 then reversed tail
                     else false;;
 
 (*......................................................................
@@ -166,8 +160,12 @@ Here is its signature:
 Replace the line below with your own definition of "unzip".
 ......................................................................*)
 
-let unzip = (fun _ -> failwith "unzip not implemented") ;;
-
+let rec unzip lst = 
+  match lst with
+  | [] -> ([],[])
+  | (x, y) :: tail -> let (left, right) = unzip tail in
+                      (x :: left, y :: right);;
+                      
 (*......................................................................
 Problem 2d: The function "variance" takes a float list and returns
 None if the list has fewer than two elements. Otherwise, it should
