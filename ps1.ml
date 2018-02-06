@@ -165,7 +165,7 @@ let rec unzip lst =
   | [] -> ([],[])
   | (x, y) :: tail -> let (left, right) = unzip tail in
                       (x :: left, y :: right);;
-                      
+
 (*......................................................................
 Problem 2d: The function "variance" takes a float list and returns
 None if the list has fewer than two elements. Otherwise, it should
@@ -196,7 +196,27 @@ Here is its signature:
 Replace the line below with your own definition of "variance".
 ......................................................................*)
 
-let variance = (fun _ -> failwith "variance not implemented") ;;
+let variance lst =
+  let rec length lst =
+    match lst with
+    | [] -> 0
+    | head :: tail -> 1 + length tail
+  in
+  let rec sum lst =
+    match lst with
+    | [] -> 0
+    | head :: tail -> head +. sum tail
+  in
+  let rec sub_sq lst mean =
+    match lst with
+    | [] -> 0
+    | head :: tail -> ((head -. m) *. (head -. m)) :: sub_sq tail m
+  in
+  match lst with
+  | [] | [_] -> None
+  | _ -> let mean = (sum lst / float (length lst)) in
+         Some (sum (sub_sq lst mean) / float (length list - 1))
+;;
 
 (*......................................................................
 Problem 2e: The function "few divisors" takes two integers, x and y, and
