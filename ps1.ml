@@ -326,9 +326,8 @@ let rec to_run_length lst =
   let rec counter lst index target =
     match lst with
     | [] -> (index, target), []
-    | head :: tail -> if head = target 
-                                      then counter tail (index + 1) target
-                                      else (index, target), lst
+    | head :: tail -> if head = target then counter tail (index + 1) target
+                      else (index, target), lst
   in
   match lst with
   | [] -> []
