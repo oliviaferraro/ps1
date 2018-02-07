@@ -215,7 +215,7 @@ let variance (lst : float list) : float option =
   let rec length lst =
     match lst with
     | [] -> 0
-    | _hd :: (_tl as tail) -> 1 + length tail
+    | _hd :: tl -> 1 + length tl
   in
   (* adds up all elements in a list *)
   let rec sum lst =
