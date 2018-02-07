@@ -112,12 +112,13 @@ Here is its signature:
 Replace the line below with your own definition of "reversed".
 ......................................................................*)
 
-(* if list has none or one elements return true, otherwise compare 1st and
-second element of the list and if in decreasing order call reversed on tl *)
 let rec reversed (lst : int list) : bool =
+  (* if list has none or one elements return true *)
   match lst with
   | [] -> true
   | [_] -> true
+  (* else compare 1st and 2nd element of the list and if in decreasing order 
+  call reversed on tail *)
   | h1 :: (h2 :: _tl as tl) -> if h1 >= h2 then reversed tl else false ;;
 
 (*......................................................................
@@ -141,11 +142,13 @@ Here is its signature:
 Replace the line below with your own definition of "merge".
 ......................................................................*)
 
-
 let rec merge (lst1 : int list) (lst2 : int list) : int list = 
+  (* if one of the lists has no elements return the other list *)
   match lst1, lst2 with
   | [], a -> a
   | a, [] -> a
+  (* else compare heads to boths lists and cons to new list in ascending order, 
+  calling merge on the remaining tail  *)
   | h1 :: tl1, h2 :: tl2 -> 
           if h1 < h2 then h1 :: merge tl1 (h2 :: tl2)
           else h2 :: merge tl2 (h1 :: tl1) ;;
@@ -168,8 +171,12 @@ Replace the line below with your own definition of "unzip".
 ......................................................................*)
 
 let rec unzip (lst : (int * int) list) : int list * int list = 
+  (* if list is empty return empty tuple *)
   match lst with
   | [] -> ([],[])
+  (* else cons first element of tuple with first element of following tuple 
+  (calling merge) into first position of new tuple, same for second element 
+  and second position of the tuple respectively *)
   | (x, y) :: tl -> let (left, right) = unzip tl in 
                       (x :: left, y :: right) ;;
 
@@ -204,23 +211,29 @@ Replace the line below with your own definition of "variance".
 ......................................................................*)
 
 let variance (lst : float list) : float option =
+  (* calculate the length of given list *)
   let rec length lst =
     match lst with
     | [] -> 0
     | hd :: tl -> 1 + length tl
   in
+  (* adds up all elements in a list *)
   let rec sum lst =
     match lst with
     | [] -> 0.
     | hd :: tl -> hd +. sum tl
   in
+  (* squares each element of the list minus the mean of the whole list *)
   let rec sub_sq lst mean =
     match lst with
     | [] -> []
     | hd :: tl -> ((hd -. mean) *. (hd -. mean)) :: sub_sq tl mean
   in
+  (* if list has < 2 elements return None *)
   match lst with
   | [] | [_] -> None
+  (* else calculate mean using sum and length, pass mean and list into sub_sq 
+  and divide output buy length - 1  *)
   | _ -> let mean = (sum lst /. float (length lst)) in
          Some (sum (sub_sq lst mean) /. float (length lst - 1)) ;;
 
@@ -250,11 +263,16 @@ Replace the line below with your own definition of "few_divisors".
 
 let few_divisors (x : int) (y : int) : bool =
   let half = x / 2 in
+    (* if divisor is less than half + 1 return count *)
     let rec helper divisor count =
       if divisor >= (half + 1) then count
+      (* else check if divisor is a factor of x, if so run helper again with 
+      divisor and count both incremented by 1*)
       else if x mod divisor = 0 then helper (divisor + 1) (count + 1)
+      (* if not a factor call helper and increment divisor, NOT count *)
       else helper (divisor + 1) count
     in
+  (* if final output of helper is less than y return true, else false *)
   y > (helper 1 1) ;;
 
 (*......................................................................
@@ -280,9 +298,12 @@ Replace the lines below with your own definition of "concat_list"
 ......................................................................*)
 
 let rec concat_list (sep : string) (lst : string list) : string =
+  (* if list is empty return empty string, if list has 1 element return string 
+  containing that element*)
   match lst with
   | [] -> ""
   | hd :: [] -> hd
+  (* else concatenate head of list onto separator onto concat_list sep tail *)
   | hd :: tl -> hd ^ sep ^ concat_list sep tl ;;
 
 (*......................................................................
@@ -318,23 +339,33 @@ and "from_run_length".
 ......................................................................*)
 
 let rec to_run_length lst =
+  (* checks if head of given list matches target char given, if so call counter 
+  and increment index by one. else return tuple (index (# of 
+  occurances of a char), target char0 and the original list *)
   let rec counter lst index target =
     match lst with
     | [] -> (index, target), []
     | hd :: tl -> if hd = target then counter tl (index + 1) target
                       else (index, target), lst
   in
+  (* if list is empty return empy list *)
   match lst with
   | [] -> []
+  (* else call counter using list, 0, and head of list as target char. cons 
+  results onto new list of tuples *)
   | hd :: tl -> let nums, oldlst = counter lst 0 hd in
                     nums :: (to_run_length oldlst);;
 
 let rec from_run_length lst =
+  (* if x > 0 cons y char x number of times onto new list, return that list. 
+  else return empty list *)
   let rec write x y =
     if x <> 0 then y :: (write (x - 1) y) else []
   in
+  (* if list is empty return empty list *)
   match lst with
   | [] -> []
+  (* else append results from write with recursive call of to_run_length tail *)
   | (x, y) :: tl -> (write x y) @ (from_run_length tl) ;;
 
 (*======================================================================
@@ -370,7 +401,6 @@ Replace the line below with your own definition of "permutations".
 ......................................................................*)
 
 let permutations = (fun _ -> failwith "permutations not implemented") ;;
-
 
 (*======================================================================
 Time estimate
