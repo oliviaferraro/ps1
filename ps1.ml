@@ -202,7 +202,7 @@ let variance lst =
     | [] -> 0
     | head :: tail -> 1 + length tail
   in
-  let rec sum lst =
+  let rec sum (lst : float list) float =
     match lst with
     | [] -> 0
     | head :: tail -> head +. sum tail
@@ -266,8 +266,12 @@ Here is its signature:
 Replace the lines below with your own definition of "concat_list"
 ......................................................................*)
 
-let concat_list =
-  (fun _ -> (fun _ -> failwith "concat_list not implemented")) ;;
+let rec concat_list sep lst =
+  match lst with
+  | [] -> ""
+  | head :: [] -> head
+  | head :: tail -> head ^ sep ^ concat_list sep tail 
+;;
 
 (*......................................................................
 Problem 2g: One way to compress a list of characters is to use
@@ -300,7 +304,18 @@ Replace the lines below with your own definitions of "to_run_length"
 and "from_run_length".
 ......................................................................*)
 
-let to_run_length = (fun _ -> failwith "to_run_length not implemented") ;;
+let to_run_length lst = 
+  let rec count_kind lst i =
+    match lst with
+    | hd1 :: (hd2 :: _tl as tail) -> if (int_of_char hd1) = (int_of_char hd2) 
+                                     then i + 1
+  in
+  match lst with
+  | [] -> []
+  | hd1 :: (hd2 :: _tl as tail) -> let index = count_kind lst i in
+                                   if (int_of_char hd1) = (int_of_char hd2) then
+                                   (index, hd1)
+;;
 
 let from_run_length =
   (fun _ -> failwith "from_run_length not implemented") ;;
