@@ -353,7 +353,7 @@ let rec to_run_length lst =
   | [] -> []
   (* else call counter using list, 0, and head of list as target char. cons 
   results onto new list of tuples *)
-  | hd :: tl -> let nums, oldlst = counter lst 0 hd in
+  | hd :: _tl -> let nums, oldlst = counter lst 0 hd in
                     nums :: (to_run_length oldlst);;
 
 let rec from_run_length lst =
