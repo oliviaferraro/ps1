@@ -386,4 +386,4 @@ about your responses and will use them to help guide us in creating
 future assignments.
 ......................................................................*)
 
-let minutes_spent_on_pset : int = 1200;;
+let minutes_spent_on_pset = 1200;;
