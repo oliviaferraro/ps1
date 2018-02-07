@@ -41,7 +41,7 @@ let () = assert ((variance []) = None);;
 let () = assert ((few_divisors 17 3) = true);;
 let () = assert ((few_divisors 4 3) = false);;
 let () = assert ((few_divisors 4 4) = true);;
-let () = assert ((few_divisors 10 1) = true) ;;
+let () = assert ((few_divisors 10 1) = false) ;;
 let () = assert ((few_divisors 1 1) = false);;
 
 (* 2f *)
