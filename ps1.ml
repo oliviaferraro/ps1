@@ -43,8 +43,8 @@ leave the underscores in as well.)
 
 (*
 
-Is a list of (string * int) not a (string * (int list)). Need parentheses 
-to make sense
+Is a list of (string * int) not a (string * (int list)). Need parentheses to
+differentiate.
 
 let _prob1d : string * int list = [("CS", 51); ("CS", 50)] ;;
 *)
@@ -53,18 +53,23 @@ let _prob1d : (string * int) list = [("CS", 51); ("CS", 50)] ;;
 
 (*
 
-
+Can't add a float (3.9) and an int (4). Change operator to float operator and
+add decimals to existing ints to make eveything float.
 
 let _prob1e : int =
   let add (x, y) = x + y in
   if add (4, 3.9) = 10 then 4 else 2 ;;
 *)
 
-let _prob1e : int -> float =
-  let add (x, y) = x + y in
-  if add (4, 3.9) = 10 then 4 else 2 ;;
+let _prob1e : float =
+  let add (x, y) = x +. y in
+  if add (4.0, 3.9) = 10.0 then 4.0 else 2.0 ;;
 
 (*
+
+Must accept option data type (None) so add Some in front of all existing ints
+to make it a (string * int option) list.
+
 let _prob1f : (string * string) list =
   [("January", None); ("February", 1); ("March", None); 
    ("April", None); ("May", None); ("June", 1); 
@@ -115,10 +120,10 @@ Replace the line below with your own definition of "reversed".
 
 let rec reversed lst =
   match lst with
-  | [] -> raise(Invalid_argument "reversed: empty list")
+  | [] -> []
   | [_] -> true
   | h1 :: (h2 :: _tl as tail) -> if h1 > h2 then reversed tail
-                    else false;;
+                    else false ;;
 
 (*......................................................................
 Problem 2b: The function "merge" takes two integer lists, each
@@ -141,7 +146,14 @@ Here is its signature:
 Replace the line below with your own definition of "merge".
 ......................................................................*)
 
-let merge = (fun _ -> failwith "merge not implemented") ;;
+let rec merge lst1 lst2 = 
+  match lst1, lst2 with
+  | [], a -> a
+  | a, [] -> a
+  | head1 :: tail1, head2 :: tail2 -> 
+          if head1 < head2
+            then head1 :: merge tail1 (head2 :: tail2)
+            else head2 :: merge tail2 (head1 :: tail1) ;;
 
 (*......................................................................
 Problem 2c: The function "unzip", given a list of integer pairs,
@@ -164,7 +176,7 @@ let rec unzip lst =
   match lst with
   | [] -> ([],[])
   | (x, y) :: tail -> let (left, right) = unzip tail in
-                      (x :: left, y :: right);;
+                      (x :: left, y :: right) ;;
 
 (*......................................................................
 Problem 2d: The function "variance" takes a float list and returns
@@ -202,21 +214,20 @@ let variance lst =
     | [] -> 0
     | head :: tail -> 1 + length tail
   in
-  let rec sum (lst : float list) float =
+  let rec sum lst =
     match lst with
-    | [] -> 0
+    | [] -> 0.
     | head :: tail -> head +. sum tail
   in
   let rec sub_sq lst mean =
     match lst with
-    | [] -> 0
-    | head :: tail -> ((head -. m) *. (head -. m)) :: sub_sq tail m
+    | [] -> []
+    | head :: tail -> ((head -. mean) *. (head -. mean)) :: sub_sq tail mean
   in
   match lst with
   | [] | [_] -> None
-  | _ -> let mean = (sum lst / float (length lst)) in
-         Some (sum (sub_sq lst mean) / float (length list - 1))
-;;
+  | _ -> let mean = (sum lst /. float (length lst)) in
+         Some (sum (sub_sq lst mean) /. float (length lst - 1)) ;;
 
 (*......................................................................
 Problem 2e: The function "few divisors" takes two integers, x and y, and
@@ -242,7 +253,14 @@ Here is its signature:
 Replace the line below with your own definition of "few_divisors".
 ......................................................................*)
 
-let few_divisors = (fun _ -> failwith "few_divisors not implemented") ;;
+let few_divisors x y =
+  let half = x / 2 in
+    let rec helper divisor count =
+      if divisor > half then count
+      else if x mod divisor = 0 then helper (divisor + 1) (count + 1)
+      else helper (divisor + 1) count
+    in
+  if y < helper 1 0 then false else true ;;
 
 (*......................................................................
 Problem 2f: The function "concat_list" takes two arguments: sep, a
@@ -270,8 +288,7 @@ let rec concat_list sep lst =
   match lst with
   | [] -> ""
   | head :: [] -> head
-  | head :: tail -> head ^ sep ^ concat_list sep tail 
-;;
+  | head :: tail -> head ^ sep ^ concat_list sep tail ;;
 
 (*......................................................................
 Problem 2g: One way to compress a list of characters is to use
@@ -302,23 +319,29 @@ Here are their signatures:
 
 Replace the lines below with your own definitions of "to_run_length"
 and "from_run_length".
+
 ......................................................................*)
 
-let to_run_length lst = 
-  let rec count_kind lst i =
+let rec to_run_length lst =
+  let rec counter lst index target =
     match lst with
-    | hd1 :: (hd2 :: _tl as tail) -> if (int_of_char hd1) = (int_of_char hd2) 
-                                     then i + 1
+    | [] -> (index, target), []
+    | head :: tail -> if head = target 
+                                      then counter tail (index + 1) target
+                                      else (index, target), lst
   in
   match lst with
   | [] -> []
-  | hd1 :: (hd2 :: _tl as tail) -> let index = count_kind lst i in
-                                   if (int_of_char hd1) = (int_of_char hd2) then
-                                   (index, hd1)
-;;
+  | head :: tail -> let nums, oldlst = counter lst 0 head in
+                    nums :: (to_run_length oldlst);;
 
-let from_run_length =
-  (fun _ -> failwith "from_run_length not implemented") ;;
+let rec from_run_length lst =
+  let rec write x y =
+    if x <> 0 then y :: (write (x - 1) y) else []
+  in
+  match lst with
+  | [] -> []
+  | (x, y) :: tail -> (write x y) @ (from_run_length tail) ;;
 
 (*======================================================================
 Problem 3: Challenge problem: Permutations
@@ -364,4 +387,4 @@ about your responses and will use them to help guide us in creating
 future assignments.
 ......................................................................*)
 
-let minutes_spent_on_pset () : int = failwith "not provided" ;;
+let minutes_spent_on_pset : int = 1200;;
