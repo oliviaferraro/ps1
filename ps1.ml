@@ -41,33 +41,27 @@ warning noting that the values are otherwise unused. You'll want to
 leave the underscores in as well.)
 ......................................................................*)
 
-(*
-
-Is a list of (string * int) not a (string * (int list)). Need parentheses to
+(* Is a list of (string * int) not a (string * (int list)). Need parentheses to
 differentiate.
 
-let _prob1d : string * int list = [("CS", 51); ("CS", 50)] ;;
+let _prob1d : string * int list = [("CS", 51); ("CS", 50)] ;; 
 *)
   
 let _prob1d : (string * int) list = [("CS", 51); ("CS", 50)] ;;
 
-(*
-
-Can't add a float (3.9) and an int (4). Change operator to float operator and
+(* Can't add a float (3.9) and an int (4). Change operator to float operator and
 add decimals to existing ints to make eveything float.
 
 let _prob1e : int =
   let add (x, y) = x + y in
-  if add (4, 3.9) = 10 then 4 else 2 ;;
+  if add (4, 3.9) = 10 then 4 else 2 ;; 
 *)
 
 let _prob1e : float =
   let add (x, y) = x +. y in
   if add (4.0, 3.9) = 10.0 then 4.0 else 2.0 ;;
 
-(*
-
-Must accept option data type (None) so add Some in front of all existing ints
+(* Must accept option data type (None) so add Some in front of all existing ints
 to make it a (string * int option) list.
 
 let _prob1f : (string * string) list =
@@ -118,12 +112,13 @@ Here is its signature:
 Replace the line below with your own definition of "reversed".
 ......................................................................*)
 
-let rec reversed lst =
+(* if list has none or one elements return true, otherwise compare 1st and
+second element of the list and if in decreasing order call reversed on tl *)
+let rec reversed (lst : int list) : bool =
   match lst with
   | [] -> true
   | [_] -> true
-  | h1 :: (h2 :: _tl as tail) -> if h1 >= h2 then reversed tail
-                    else false ;;
+  | h1 :: (h2 :: _tl as tl) -> if h1 >= h2 then reversed tl else false ;;
 
 (*......................................................................
 Problem 2b: The function "merge" takes two integer lists, each
@@ -146,14 +141,14 @@ Here is its signature:
 Replace the line below with your own definition of "merge".
 ......................................................................*)
 
-let rec merge lst1 lst2 = 
+
+let rec merge (lst1 : int list) (lst2 : int list) : int list = 
   match lst1, lst2 with
   | [], a -> a
   | a, [] -> a
-  | head1 :: tail1, head2 :: tail2 -> 
-          if head1 < head2
-            then head1 :: merge tail1 (head2 :: tail2)
-            else head2 :: merge tail2 (head1 :: tail1) ;;
+  | h1 :: tl1, h2 :: tl2 -> 
+          if h1 < h2 then h1 :: merge tl1 (h2 :: tl2)
+          else h2 :: merge tl2 (h1 :: tl1) ;;
 
 (*......................................................................
 Problem 2c: The function "unzip", given a list of integer pairs,
@@ -172,10 +167,10 @@ Here is its signature:
 Replace the line below with your own definition of "unzip".
 ......................................................................*)
 
-let rec unzip lst = 
+let rec unzip (lst : (int * int) list) : int list * int list = 
   match lst with
   | [] -> ([],[])
-  | (x, y) :: tail -> let (left, right) = unzip tail in
+  | (x, y) :: tl -> let (left, right) = unzip tl in 
                       (x :: left, y :: right) ;;
 
 (*......................................................................
@@ -208,21 +203,21 @@ Here is its signature:
 Replace the line below with your own definition of "variance".
 ......................................................................*)
 
-let variance lst =
+let variance (lst : float list) : float option =
   let rec length lst =
     match lst with
     | [] -> 0
-    | head :: tail -> 1 + length tail
+    | hd :: tl -> 1 + length tl
   in
   let rec sum lst =
     match lst with
     | [] -> 0.
-    | head :: tail -> head +. sum tail
+    | hd :: tl -> hd +. sum tl
   in
   let rec sub_sq lst mean =
     match lst with
     | [] -> []
-    | head :: tail -> ((head -. mean) *. (head -. mean)) :: sub_sq tail mean
+    | hd :: tl -> ((hd -. mean) *. (hd -. mean)) :: sub_sq tl mean
   in
   match lst with
   | [] | [_] -> None
@@ -253,14 +248,14 @@ Here is its signature:
 Replace the line below with your own definition of "few_divisors".
 ......................................................................*)
 
-let few_divisors x y =
+let few_divisors (x : int) (y : int) : bool =
   let half = x / 2 in
     let rec helper divisor count =
       if divisor >= (half + 1) then count
       else if x mod divisor = 0 then helper (divisor + 1) (count + 1)
       else helper (divisor + 1) count
     in
-  if y > (helper 1 1) then true else false ;;
+  y > (helper 1 1) ;;
 
 (*......................................................................
 Problem 2f: The function "concat_list" takes two arguments: sep, a
@@ -284,11 +279,11 @@ Here is its signature:
 Replace the lines below with your own definition of "concat_list"
 ......................................................................*)
 
-let rec concat_list sep lst =
+let rec concat_list (sep : string) (lst : string list) : string =
   match lst with
   | [] -> ""
-  | head :: [] -> head
-  | head :: tail -> head ^ sep ^ concat_list sep tail ;;
+  | hd :: [] -> hd
+  | hd :: tl -> hd ^ sep ^ concat_list sep tl ;;
 
 (*......................................................................
 Problem 2g: One way to compress a list of characters is to use
@@ -326,12 +321,12 @@ let rec to_run_length lst =
   let rec counter lst index target =
     match lst with
     | [] -> (index, target), []
-    | head :: tail -> if head = target then counter tail (index + 1) target
+    | hd :: tl -> if hd = target then counter tl (index + 1) target
                       else (index, target), lst
   in
   match lst with
   | [] -> []
-  | head :: tail -> let nums, oldlst = counter lst 0 head in
+  | hd :: tl -> let nums, oldlst = counter lst 0 hd in
                     nums :: (to_run_length oldlst);;
 
 let rec from_run_length lst =
@@ -340,7 +335,7 @@ let rec from_run_length lst =
   in
   match lst with
   | [] -> []
-  | (x, y) :: tail -> (write x y) @ (from_run_length tail) ;;
+  | (x, y) :: tl -> (write x y) @ (from_run_length tl) ;;
 
 (*======================================================================
 Problem 3: Challenge problem: Permutations
