@@ -120,9 +120,9 @@ Replace the line below with your own definition of "reversed".
 
 let rec reversed lst =
   match lst with
-  | [] -> []
+  | [] -> true
   | [_] -> true
-  | h1 :: (h2 :: _tl as tail) -> if h1 > h2 then reversed tail
+  | h1 :: (h2 :: _tl as tail) -> if h1 >= h2 then reversed tail
                     else false ;;
 
 (*......................................................................
@@ -256,11 +256,11 @@ Replace the line below with your own definition of "few_divisors".
 let few_divisors x y =
   let half = x / 2 in
     let rec helper divisor count =
-      if divisor > half then count
+      if divisor >= (half + 1) then count
       else if x mod divisor = 0 then helper (divisor + 1) (count + 1)
       else helper (divisor + 1) count
     in
-  if y < helper 1 0 then false else true ;;
+  if y > (helper 1 1) then true else false ;;
 
 (*......................................................................
 Problem 2f: The function "concat_list" takes two arguments: sep, a
